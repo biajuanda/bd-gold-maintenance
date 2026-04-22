@@ -15,20 +15,24 @@ fi
 
 echo "Iniciando mantenimiento de vistas de Mixpanel..."
 
-# Ejecutamos ambos refrescos en estricto orden. 
-# Si creaste los índices únicos en el paso anterior, puedes agregar CONCURRENTLY aquí.
+# Ejecutamos ambos refrescos en estricto orden.
+# Si mas adelante creas los indices unicos requeridos, puedes evaluar usar CONCURRENTLY.
+echo "Actualizando base de eventos..."
 PGPASSWORD="${DB_PASSWORD_VALUE}" psql \
   -U "${DB_USER_VALUE}" \
   -h "${DB_HOST_VALUE}" \
   -p "${DB_PORT_VALUE}" \
   -d "${DB_NAME_VALUE}" \
   -v ON_ERROR_STOP=1 \
-  -c "
-    echo 'Actualizando base de eventos...';
-    REFRESH MATERIALIZED VIEW retention.mixpanel_events;
-    
-    echo 'Actualizando base de sesiones...';
-    REFRESH MATERIALIZED VIEW retention.mixpanel_sessions;
-  "
+  -c "REFRESH MATERIALIZED VIEW retention.mixpanel_events;"
+
+echo "Actualizando base de sesiones..."
+PGPASSWORD="${DB_PASSWORD_VALUE}" psql \
+  -U "${DB_USER_VALUE}" \
+  -h "${DB_HOST_VALUE}" \
+  -p "${DB_PORT_VALUE}" \
+  -d "${DB_NAME_VALUE}" \
+  -v ON_ERROR_STOP=1 \
+  -c "REFRESH MATERIALIZED VIEW retention.mixpanel_sessions;"
 
 echo "Mantenimiento finalizado con éxito."
