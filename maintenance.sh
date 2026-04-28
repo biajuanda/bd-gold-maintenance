@@ -13,26 +13,41 @@ if [ -z "${DB_HOST_VALUE}" ] || [ -z "${DB_USER_VALUE}" ] || [ -z "${DB_PASSWORD
   exit 1
 fi
 
-echo "Iniciando mantenimiento de vistas de Mixpanel..."
+echo "Iniciando mantenimiento de vistas materializadas..."
 
-# Ejecutamos ambos refrescos en estricto orden.
-# Si mas adelante creas los indices unicos requeridos, puedes evaluar usar CONCURRENTLY.
-echo "Actualizando base de eventos..."
-PGPASSWORD="${DB_PASSWORD_VALUE}" psql \
-  -U "${DB_USER_VALUE}" \
-  -h "${DB_HOST_VALUE}" \
-  -p "${DB_PORT_VALUE}" \
-  -d "${DB_NAME_VALUE}" \
-  -v ON_ERROR_STOP=1 \
-  -c "REFRESH MATERIALIZED VIEW retention.mixpanel_events;"
+# Helper: corre un REFRESH (con o sin CONCURRENTLY) y loguea pasos.
+# Uso: refresh_view "<nombre.cualificado>" [CONCURRENTLY]
+refresh_view() {
+  local view_name="$1"
+  local concurrently="${2:-}"
+  local sql
 
-echo "Actualizando base de sesiones..."
-PGPASSWORD="${DB_PASSWORD_VALUE}" psql \
-  -U "${DB_USER_VALUE}" \
-  -h "${DB_HOST_VALUE}" \
-  -p "${DB_PORT_VALUE}" \
-  -d "${DB_NAME_VALUE}" \
-  -v ON_ERROR_STOP=1 \
-  -c "REFRESH MATERIALIZED VIEW retention.mixpanel_sessions;"
+  if [ "${concurrently}" = "CONCURRENTLY" ]; then
+    sql="REFRESH MATERIALIZED VIEW CONCURRENTLY ${view_name};"
+  else
+    sql="REFRESH MATERIALIZED VIEW ${view_name};"
+  fi
+
+  echo "Actualizando ${view_name}..."
+  PGPASSWORD="${DB_PASSWORD_VALUE}" psql \
+    -U "${DB_USER_VALUE}" \
+    -h "${DB_HOST_VALUE}" \
+    -p "${DB_PORT_VALUE}" \
+    -d "${DB_NAME_VALUE}" \
+    -v ON_ERROR_STOP=1 \
+    -c "${sql}"
+}
+
+# --- Retention (Mixpanel) ----------------------------------------------------
+# Sin CONCURRENTLY: estas vistas no tienen los indices unicos requeridos.
+refresh_view "retention.mixpanel_events"
+refresh_view "retention.mixpanel_sessions"
+
+# --- Finance / Comunicaciones (Sendgrid funnel + bills coverage) -------------
+# CONCURRENTLY: las matviews tienen UNIQUE INDEX (idx_*_pk) sobre la PK logica,
+# lo cual permite refrescar sin bloquear lectores. Ver
+# bia-growth-status-back/docs/gold-schema/finance-comunicaciones.sql
+refresh_view "finance.bills_communications_period"           "CONCURRENTLY"
+refresh_view "finance.communications_message_aggregated"     "CONCURRENTLY"
 
 echo "Mantenimiento finalizado con éxito."
