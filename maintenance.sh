@@ -49,5 +49,6 @@ refresh_view "retention.mixpanel_sessions"
 # bia-growth-status-back/docs/gold-schema/finance-comunicaciones.sql
 refresh_view "finance.bills_communications_period"           "CONCURRENTLY"
 refresh_view "finance.communications_message_aggregated"     "CONCURRENTLY"
+refresh_view "finance.communications_message_lifecycle"      "CONCURRENTLY"
 
 echo "Mantenimiento finalizado con éxito."
