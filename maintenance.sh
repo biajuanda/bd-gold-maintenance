@@ -51,4 +51,19 @@ refresh_view "finance.bills_communications_period"           "CONCURRENTLY"
 refresh_view "finance.communications_message_aggregated"     "CONCURRENTLY"
 refresh_view "finance.communications_message_lifecycle"      "CONCURRENTLY"
 
+# --- Finance / Recaudo (Facturación & Pagos) ---------------------------------
+# 10 matviews que reemplazan los queries en vivo del repo Go contra bia-bills
+# y bia-payments. Cada una tiene UNIQUE INDEX, por eso CONCURRENTLY. Ver
+# bia-growth-status-back/docs/gold-schema/finance-recaudo.sql
+refresh_view "finance.billing_history_monthly"               "CONCURRENTLY"
+refresh_view "finance.collections_okr_compliance"            "CONCURRENTLY"
+refresh_view "finance.collections_payment_buckets"           "CONCURRENTLY"
+refresh_view "finance.collections_platforms_distribution"    "CONCURRENTLY"
+refresh_view "finance.collections_payment_methods_distrib"   "CONCURRENTLY"
+refresh_view "finance.collections_debit_type_summary"        "CONCURRENTLY"
+refresh_view "finance.collections_recaudo_detail"            "CONCURRENTLY"
+refresh_view "finance.collections_portfolio_cadence"         "CONCURRENTLY"
+refresh_view "finance.collections_daily_accumulated"         "CONCURRENTLY"
+refresh_view "finance.collections_success_flow_bills"        "CONCURRENTLY"
+
 echo "Mantenimiento finalizado con éxito."
