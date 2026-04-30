@@ -83,6 +83,15 @@ refresh_view "energy.comp_ranking_monthly"                   "CONCURRENTLY"
 refresh_view "energy.comp_evolution"                         "CONCURRENTLY"
 refresh_view "energy.desv_tarifa"                            "CONCURRENTLY"
 
+# --- Energy / Precio de Bolsa (PB hourly + daily + tipo-día curve) -----------
+# 3 matviews backing /energy/price/{hourly-curve,pb-historical,monthly,pb-min-avg-max}.
+# All ship with plain-column UNIQUE INDEXes so CONCURRENTLY works.
+# Source: file-compiler.trsd_public filtered to code='PBNA' and
+# version_file IN ('Tx1','Tx2'), file_date >= '2024-01-01'. Ver
+# bia-growth-status-back/docs/gold-schema/energy-precio-bolsa.sql
+refresh_view "energy.price_pb_hourly_curve"                  "CONCURRENTLY"
+refresh_view "energy.price_pb_hourly"                        "CONCURRENTLY"
+refresh_view "energy.price_pb_daily"                         "CONCURRENTLY"
 # --- CGM (Consumos) ----------------------------------------------------------
 refresh_view "cgm.consumos_diarios"
 
