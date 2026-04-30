@@ -66,4 +66,11 @@ refresh_view "finance.collections_portfolio_cadence"         "CONCURRENTLY"
 refresh_view "finance.collections_daily_accumulated"         "CONCURRENTLY"
 refresh_view "finance.collections_success_flow_bills"        "CONCURRENTLY"
 
+# --- Acquisition (HubSpot funnel) --------------------------------------------
+# Sin CONCURRENTLY: la vista no tiene UNIQUE INDEX sobre PK lógica.
+# Consolida en una fila por entidad todas las etapas del embudo de adquisición
+# (desde primer contacto en HubSpot hasta deal ganado) para análisis de
+# pipeline comercial sin JOINs ad-hoc.
+refresh_view "acquisition.acquisition_funnel"
+
 echo "Mantenimiento finalizado con éxito."
