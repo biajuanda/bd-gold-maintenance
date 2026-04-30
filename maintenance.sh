@@ -83,6 +83,20 @@ refresh_view "energy.comp_ranking_monthly"                   "CONCURRENTLY"
 refresh_view "energy.comp_evolution"                         "CONCURRENTLY"
 refresh_view "energy.desv_tarifa"                            "CONCURRENTLY"
 
+# --- Energy / Portafolio (Demanda) + Trading (Posición de Bolsa) -------------
+# 6 matviews backing /energy/demand/{monthly,daily,hourly-curve} and
+# /energy/position/{hourly,summary}. All ship with plain-column UNIQUE INDEXes
+# so CONCURRENTLY works. Sources: file-compiler.{adem_public, tgrl_public,
+# trsd_public}, filtered to file_date >= '2024-01-01'. position_avg_prices
+# pre-joins tgrl × trsd (PBNA Tx2). Ver
+# bia-growth-status-back/docs/gold-schema/energy-portafolio-trading.sql
+refresh_view "energy.demand_monthly"                         "CONCURRENTLY"
+refresh_view "energy.demand_daily"                           "CONCURRENTLY"
+refresh_view "energy.demand_hourly_curve"                    "CONCURRENTLY"
+refresh_view "energy.position_hourly"                        "CONCURRENTLY"
+refresh_view "energy.position_volumes"                       "CONCURRENTLY"
+refresh_view "energy.position_avg_prices"                    "CONCURRENTLY"
+
 # --- CGM (Consumos) ----------------------------------------------------------
 refresh_view "cgm.consumos_diarios"
 
