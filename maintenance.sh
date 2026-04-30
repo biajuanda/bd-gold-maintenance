@@ -66,4 +66,20 @@ refresh_view "finance.collections_portfolio_cadence"         "CONCURRENTLY"
 refresh_view "finance.collections_daily_accumulated"         "CONCURRENTLY"
 refresh_view "finance.collections_success_flow_bills"        "CONCURRENTLY"
 
+# --- Energy / Tarifas (Desviaciones KR9 + Competitividad KR8/KR10/KR11) -------
+# 7 matviews backing /energy/desviaciones/tarifa and /energy/competitiveness/*.
+# All ship with UNIQUE INDEXes on plain columns so CONCURRENTLY works.
+# Order respects internal dependencies: comp_all_agents and comp_dcr feed
+# comp_agent_market, which in turn feeds comp_ranking_monthly. CONCURRENTLY
+# refreshes do not block readers, so the temporary intra-batch staleness
+# during a refresh window is acceptable. Ver
+# bia-growth-status-back/docs/gold-schema/energy-tarifas.sql
+refresh_view "energy.comp_all_agents"                        "CONCURRENTLY"
+refresh_view "energy.comp_dcr"                               "CONCURRENTLY"
+refresh_view "energy.comp_bia_pub"                           "CONCURRENTLY"
+refresh_view "energy.comp_agent_market"                      "CONCURRENTLY"
+refresh_view "energy.comp_ranking_monthly"                   "CONCURRENTLY"
+refresh_view "energy.comp_evolution"                         "CONCURRENTLY"
+refresh_view "energy.desv_tarifa"                            "CONCURRENTLY"
+
 echo "Mantenimiento finalizado con éxito."
