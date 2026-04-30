@@ -42,7 +42,7 @@ refresh_view() {
 # Sin CONCURRENTLY: estas vistas no tienen los indices unicos requeridos.
 refresh_view "retention.mixpanel_events"
 refresh_view "retention.mixpanel_sessions"
-refresh_view "retention.eva_chats"
+refresh_view "retention.chats_eva"
 
 # --- Finance / Comunicaciones (Sendgrid funnel + bills coverage) -------------
 # CONCURRENTLY: las matviews tienen UNIQUE INDEX (idx_*_pk) sobre la PK logica,
