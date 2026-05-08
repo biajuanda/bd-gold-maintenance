@@ -109,4 +109,13 @@ refresh_view "energy.price_pb_daily"                         "CONCURRENTLY"
 # --- CGM (Consumos) ----------------------------------------------------------
 refresh_view "cgm.consumos_diarios"
 
+# --- Acquisition (HubSpot funnel) --------------------------------------------
+# Sin CONCURRENTLY: las vistas no tienen UNIQUE INDEX sobre PK lógica.
+# Consolida en una fila por entidad todas las etapas del embudo de adquisición
+# (desde primer contacto en HubSpot hasta deal ganado) para análisis de
+# pipeline comercial sin JOINs ad-hoc.
+refresh_view "acquisition.acquisition_funnel"               "CONCURRENTLY"
+# Consolida una frontera por cada deal que se puede conectar con acquisition_funnel.
+refresh_view "acquisition.deal_fronteras"                   "CONCURRENTLY"
+
 echo "Mantenimiento finalizado con éxito."
