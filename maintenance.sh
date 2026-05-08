@@ -44,6 +44,9 @@ refresh_view "retention.mixpanel_events"
 refresh_view "retention.mixpanel_sessions"
 refresh_view "retention.chats_eva"
 
+# --- Retention (kustomer + hubspot) ------------------------------------------
+refresh_view "retention.kustomer_cx"                       "CONCURRENTLY"
+
 # --- Finance / Comunicaciones (Sendgrid funnel + bills coverage) -------------
 # CONCURRENTLY: las matviews tienen UNIQUE INDEX (idx_*_pk) sobre la PK logica,
 # lo cual permite refrescar sin bloquear lectores. Ver
