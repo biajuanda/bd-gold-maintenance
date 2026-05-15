@@ -114,7 +114,10 @@ refresh_view "energy.price_pb_hourly_curve"                  "CONCURRENTLY"
 refresh_view "energy.price_pb_hourly"                        "CONCURRENTLY"
 refresh_view "energy.price_pb_daily"                         "CONCURRENTLY"
 # --- CGM (Consumos) ----------------------------------------------------------
-refresh_view "cgm.consumos_diarios"
+
+refresh_view "cgm.consumos_diarios"      			"CONCURRENTLY"
+refresh_view "cgm.lecturas_horarias_diarias"     	"CONCURRENTLY"
+refresh_view "cgm.lecturas_horarias_medidor"      	"CONCURRENTLY"
 
 # --- Acquisition (HubSpot funnel) --------------------------------------------
 # Sin CONCURRENTLY: las vistas no tienen UNIQUE INDEX sobre PK lógica.
